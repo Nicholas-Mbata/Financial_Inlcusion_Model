@@ -1,56 +1,6 @@
-
-#IMPORTING THE NEEDED LIBRARIES.
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, accuracy_score
-from sklearn.preprocessing import LabelEncoder
-import pickle
 import streamlit as st
-
-
-Dataset=pd.read_csv(r"C:\Users\NMbata\Downloads\Financial_inclusion_dataset.csv")
-print(Dataset.shape)
-
-#ENCODING THE TARGET AND CATEGORICAL VARIABLES
-# Encode categorical variables
-label_encoders = {}
-categorical_cols = ['location_type', 'cellphone_access', 'gender_of_respondent',
-                   'relationship_with_head', 'marital_status', 'education_level', 'job_type']
-
-for col in categorical_cols:
-    le = LabelEncoder()
-    Dataset[col] = le.fit_transform(Dataset[col])
-    label_encoders[col] = le
-
-# Encode target variable
-le_target = LabelEncoder()
-Dataset['bank_account'] = le_target.fit_transform(Dataset['bank_account'])
-
-#SPLITTING AND TRAINING THE DATASET
-
-
-X = Dataset[['location_type', 'cellphone_access', 'household_size', 'age_of_respondent',
-       'gender_of_respondent', 'relationship_with_head', 'marital_status',
-       'education_level', 'job_type']]  # Select relevant features
-y = Dataset['bank_account']
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42) # Adjust test_size as needed
-
-
-model = RandomForestClassifier(random_state=42)
-model.fit(X_train, y_train)
-
-#MODEL EVALUATION
-
-y_pred = model.predict(X_test)
-print(classification_report(y_test, y_pred))
-print(f"Accuracy: {accuracy_score(y_test, y_pred)}")
-
-model_filename = 'financial_inclusion_model.pkl'
-with open(model_filename, 'wb') as file:
-    pickle.dump(model, file)
+import pandas as pd
+import pickle
 
 #Loading the Model
 with open('financial_inclusion_model.pkl', 'rb') as f:
